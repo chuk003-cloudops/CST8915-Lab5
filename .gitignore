@@ -1,0 +1,7 @@
+.env
+.env.*
+!.env.example
+order-service-L4/
+product-service-python-L4/
+store-front-L4/
+docker-compose.build.yaml

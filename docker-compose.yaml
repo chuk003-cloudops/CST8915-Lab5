@@ -1,0 +1,46 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4.3.6-management
+    hostname: rabbitmq
+    ports:
+      - "15672:15672" # Optional management UI; omit if unused.
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:?Set RABBITMQ_DEFAULT_USER in .env}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:?Set RABBITMQ_DEFAULT_PASS in .env}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  order-service:
+    image: ${DOCKERHUB_USERNAME:?Set DOCKERHUB_USERNAME in .env}/order-service:latest
+    ports:
+      - "3000:3000"
+    environment:
+      RABBITMQ_CONNECTION_STRING: amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672/
+      PORT: "3000"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  product-service:
+    image: ${DOCKERHUB_USERNAME:?Set DOCKERHUB_USERNAME in .env}/product-service:latest
+    ports:
+      - "3030:3030"
+    environment:
+      PORT: "3030"
+
+  store-front:
+    image: ${DOCKERHUB_USERNAME:?Set DOCKERHUB_USERNAME in .env}/store-front:latest
+    ports:
+      - "8080:80"
+    depends_on:
+      - product-service
+      - order-service
+
+volumes:
+  rabbitmq-data:
