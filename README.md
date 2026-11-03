@@ -4,7 +4,7 @@ The final `docker-compose.yaml` runs published Docker Hub images. It contains no
 
 ## Demo video
 
-The required YouTube demonstration is pending recording/upload. This repository is not yet ready for Brightspace submission without that link.
+[Watch the Lab 5 demonstration on YouTube](https://youtu.be/MI_eH4VjhVk) (unlisted, 1 minute 19 seconds). The screen recording includes explanatory captions.
 
 ## Service forks
 
